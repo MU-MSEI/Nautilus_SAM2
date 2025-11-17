@@ -1,0 +1,61 @@
+# SAM2 (Segment Anything Model 2) Dockerfile
+# Base image with PyTorch and CUDA support
+FROM pytorch/pytorch:2.3.1-cuda11.8-cudnn8-devel
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Create personal directory structure
+RUN mkdir -p /develop/code \
+    /develop/data \
+    /develop/results \
+    /develop/build
+
+# Set working directory
+WORKDIR /develop/code
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    wget \
+    build-essential \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip and install wheel
+RUN pip install --upgrade pip setuptools wheel
+
+# Clone and install SAM2
+RUN git clone https://github.com/facebookresearch/segment-anything-2.git /develop/code/sam2 && \
+    cd /develop/code/sam2 && \
+    pip install -e .
+
+# Download SAM2 checkpoints
+RUN cd /develop/code/sam2/checkpoints && \
+    ./download_ckpts.sh && \
+    cd /develop/code/sam2
+
+# Install additional project dependencies
+RUN pip install --no-cache-dir \
+    matplotlib>=3.10.7 \
+    numpy>=2.3.5 \
+    opencv-python>=4.11.0.86 \
+    jupyterlab \
+    notebook \
+    ipykernel \
+    pillow
+
+# Create directories for model checkpoints
+RUN mkdir -p /develop/build/checkpoints
+
+# Set working directory to code
+WORKDIR /develop/code
+
+# Default command
+CMD ["/bin/bash"]

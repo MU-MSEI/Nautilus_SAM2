@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-server
+spec:
+  template:
+    spec:
+      containers:
+      - name: ollama-server
+        image: ollama/ollama:latest
+        imagePullPolicy: Always
+        env:
+        - name: OLLAMA_MODELS
+          value: "/develop/ollama_models"
+        - name: OLLAMA_CONTEXT_LENGTH
+          value: "200000"
+        - name: OLLAMA_KEEP_ALIVE
+          value: "-1"
+        command: ["/bin/bash", "-c"]
+        args: ["ollama serve"]
+        volumeMounts:
+            - name: ollama-models
+              mountPath: /develop/ollama_models
+            - name: dshm
+              mountPath: /dev/shm
+        resources:
+            limits:
+              memory: 120Gi
+              cpu: 16
+              nvidia.com/a100: 2
+            requests:
+              memory: 120Gi
+              cpu: 16
+              nvidia.com/a100: 2
+      volumes:
+      - name: ollama-models
+        persistentVolumeClaim:
+            claimName: ollama-models
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      restartPolicy: Never      
+  backoffLimit: 1

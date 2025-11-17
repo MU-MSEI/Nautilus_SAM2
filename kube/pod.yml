@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  #Adjust PAWPRINT HERE
+  name: mblgh6-sam-gpu
+spec:
+  containers:
+  #Adjust PAWPRINT HERE
+  - name: mblgh6-sam-gpu
+    image: gitlab-registry.nrp-nautilus.io/tbgr38/sam
+    command: ["/bin/bash"]
+    # Change --notebook-dir= if you want your jupyterlab instance in a different directory
+    args: ["-c", "jupyter lab --notebook-dir=/workspace/demo --ip 0.0.0.0 --no-browser --allow-root"] 
+    resources:
+      limits:
+        memory: 12Gi
+        cpu: 4
+        nvidia.com/gpu: 1
+      requests:
+        memory: 12Gi
+        cpu: 4
+        nvidia.com/gpu: 1
+    volumeMounts:
+      - mountPath: /workspace/jupyter
+        name: sam-workspace
+  volumes:
+  - name: sam-workspace
+    persistentVolumeClaim:
+      #Adjust PAWPRINT HERE
+      claimName: mblgh6-sam-workspace
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                  - NVIDIA-GeForce-RTX-3090
+                  - NVIDIA-TITAN-RTX
+                  - NVIDIA-RTX-A5000
+                  - Quadro-RTX-6000
+                  - NVIDIA-A10

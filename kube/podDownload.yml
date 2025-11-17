@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  #Adjust PAWPRINT HERE
+  name: mblgh6-download-sam
+spec:
+  restartPolicy: Never
+  containers:
+  #Adjust PAWPRINT HERE
+  - name: mblgh6-download-sam
+    image: ubuntu:22.04
+    command: ["/bin/bash" , "-c"]
+    args:
+      - apt update;
+        apt install wget -y;
+        mkdir /workspace/jupyter/models;
+        cd /workspace/jupyter/models;
+        wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth;
+        wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth;
+        wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth;
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 2
+      requests:
+        memory: 2Gi
+        cpu: 2
+    volumeMounts:
+      - mountPath: /workspace/jupyter
+        name: sam-workspace
+  volumes:
+  - name: sam-workspace
+    persistentVolumeClaim:
+      #Adjust PAWPRINT HERE
+      claimName: mblgh6-sam-workspace
