@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   #Adjust PAWPRINT HERE
-  name: mblgh6-download-sam
+  name: mblgh6-marshall-sam2
 spec:
   restartPolicy: Never
   containers:

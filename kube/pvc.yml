@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: Marshall-SAM2-pvc
+  name: marshall-sam2-pvc
   namespace: gpn-mizzou-muem
 spec:
   storageClassName: rook-cephfs-central
