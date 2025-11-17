@@ -19,7 +19,11 @@ spec:
         # Set working directory for SAM2 (helps with config path resolution)
         cd /develop/code/sam2
         export PYTHONPATH=/develop/code/sam2:$PYTHONPATH
-        
+        # clone this repository
+        cd /develop/code
+        git clone https://github.com/MU-MSEI/Nautilus_SAM2.git
+        cd Nautilus_SAM2
+        pip install -e .
         # Keep container running
         sleep infinity
     resources:
