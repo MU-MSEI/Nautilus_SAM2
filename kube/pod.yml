@@ -13,7 +13,14 @@ spec:
       - "-c"
       - |
         # Create symlink to checkpoints from PVC
+        rm -rf /develop/code/sam2/checkpoints
         ln -sf /develop/data/checkpoints /develop/code/sam2/checkpoints
+        
+        # Set working directory for SAM2 (helps with config path resolution)
+        cd /develop/code/sam2
+        export PYTHONPATH=/develop/code/sam2:$PYTHONPATH
+        
+        # Keep container running
         sleep infinity
     resources:
       limits:
